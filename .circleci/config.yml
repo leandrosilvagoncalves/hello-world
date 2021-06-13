@@ -18,14 +18,14 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/dir/output
-      - run: cat "output.txt"
+      - run: cat output.txt
   workflows:
   # Name the workflow "welcome"
-  welcome:
-    # Run the welcome/run job in its own container
-    jobs:
-      - save_hello_world_output
-      - print_output_file:
-          requires:
-            - save_hello_world_output
+    my_workflow:
+      # Run the welcome/run job in its own container
+      jobs:
+        - save_hello_world_output
+        - print_output_file:
+            requires:
+              - save_hello_world_output
 
