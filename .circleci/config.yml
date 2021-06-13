@@ -10,7 +10,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - output
+            - output.txt
       - run: echo "cenas e cenas" > output.txt
   print_output_file:
     docker:
@@ -22,7 +22,7 @@ jobs:
 workflows:
   # Name the workflow "welcome"
     my_workflow:
-      # Run the welcome/run job in its own container
+      # Run the welcome/run job in its own containerr
       jobs:
         - save_hello_world_output
         - print_output_file:
