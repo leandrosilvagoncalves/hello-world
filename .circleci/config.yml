@@ -8,7 +8,7 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - persist_to_workspace:
-          root: /tmp/dir
+          root: ~/
           paths:
             - output
       - run: echo "cenas e cenas" > output.txt
@@ -17,7 +17,7 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - attach_workspace:
-          at: /tmp/dir/output
+          at: ~/
       - run: cat output.txt
 workflows:
   # Name the workflow "welcome"
