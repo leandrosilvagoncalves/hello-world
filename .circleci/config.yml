@@ -32,13 +32,13 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - run: 
-        name: echo Return 1
-        command: return 1
+          name: echo Return 1
+          command: return 1
         
       - run:
-        name: Handlilng Return 1
-        command: echo ""Hello Error!"
-        when: on_fail
+          name: Handlilng Return 1
+          command: echo "Hello Error!"
+          when: on_fail
         
   print_pipeline:
     docker:
@@ -57,6 +57,6 @@ workflows:
               - save_hello_world_output
         - print_pipeline
         - return_fail
-        
+
 
 
