@@ -2,6 +2,14 @@
 version: 2.1
 # Use a package of configuration called an orb.
 # Orchestrate or schedule a set of jobs
+commands:
+  print_pipeline_id:
+    description: "A very simple command for showing pipeline ID"
+        parameters:
+          id:
+            type: string
+        steps:
+          - run: echo << parameters.id >>  
 jobs:
   save_hello_world_output:
     docker:
@@ -22,15 +30,9 @@ jobs:
   print_pipeline:
     docker:
       - image: circleci/node:13.8.0
-    commands:
-      sayhello:
-        description: "A very simple command for demonstration purposes"
-        parameters:
-          to:
-             type: string
-             default: "Hello World"
-        steps:
-          - run: echo << parameters.to >>
+    steps:
+      - print_pipeline_id:
+          id: echo << pipeline.id >>
 workflows:
   # Name the workflow "welcome"
     my_workflow:
