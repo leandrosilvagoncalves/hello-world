@@ -5,11 +5,11 @@ version: 2.1
 commands:
   print_pipeline_id:
     description: "A very simple command for showing pipeline ID"
-        parameters:
-          id:
-            type: string
-        steps:
-          - run: echo << parameters.id >>  
+    parameters:
+      id:
+        type: string
+    steps:
+      - run: echo << parameters.id >>  
 jobs:
   save_hello_world_output:
     docker:
