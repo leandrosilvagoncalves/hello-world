@@ -27,8 +27,8 @@ jobs:
           to:
              type: string
              default: "Hello World"
-         steps:
-           - run: echo << parameters.to >>
+        steps:
+          - run: echo << parameters.to >>
 workflows:
   # Name the workflow "welcome"
     my_workflow:
