@@ -39,24 +39,36 @@ jobs:
           name: Handlilng Return 1
           command: echo "Hello Error!"
           when: on_fail
-        
   print_pipeline:
     docker:
       - image: circleci/node:13.8.0
     steps:
       - print_pipeline_id:
           id: echo << pipeline.id >>
+  create_infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Ensure backend infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file template.yml \
+              --stack-name lgsg-stack
+
 workflows:
   # Name the workflow "welcome"
     my_workflow:
       # Run the welcome/run job in its own containerr
       jobs:
-        - save_hello_world_output
-        - print_output_file:
-            requires:
-              - save_hello_world_output
-        - print_pipeline
-        - return_fail
-
+        # - save_hello_world_output
+        # - print_output_file:
+        #    requires:
+        #      - save_hello_world_output
+        # - print_pipeline
+        # - return_fail
+        - create_infrastructure
+        
 
 
