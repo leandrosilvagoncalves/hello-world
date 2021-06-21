@@ -53,9 +53,10 @@ jobs:
       - run:
           name: Ensure backend infrastructure exist
           command: |
-            aws cloudformation update \
+            aws cloudformation deploy \
               --template-file template.yml \
-              --stack-name lgsg-stack
+              --stack-name lgsg-stack \
+              --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" 
   configure-infrastructure:
     docker:
       - image: python:3.7-alpine3.11
