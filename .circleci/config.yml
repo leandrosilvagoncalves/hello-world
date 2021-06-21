@@ -85,7 +85,8 @@ workflows:
         #      - save_hello_world_output
         # - print_pipeline
         # - return_fail
-        - create_infrastructure
+        # - create_infrastructure
+        - configure-infrastructure
         
 
 
