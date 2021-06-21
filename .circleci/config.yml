@@ -53,7 +53,7 @@ jobs:
       - run:
           name: Ensure backend infrastructure exist
           command: |
-            aws cloudformation deploy \
+            aws cloudformation update \
               --template-file template.yml \
               --stack-name lgsg-stack
   configure-infrastructure:
@@ -71,7 +71,7 @@ jobs:
           name: Configure Server
           command:
             ansoble-playbook -i inventory.txt playbook.yml
-            
+
 
 workflows:
   # Name the workflow "welcome"
