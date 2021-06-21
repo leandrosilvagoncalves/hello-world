@@ -56,6 +56,22 @@ jobs:
             aws cloudformation deploy \
               --template-file template.yml \
               --stack-name lgsg-stack
+  configure-infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: [33:3b:39:fa:96:c7:fc:80:a1:82:88:89:3f:9f:48:3e]
+      - run:
+          name: Install Dependencies
+          command:
+            apk add --update ansible 
+      - run:
+          name: Configure Server
+          command:
+            ansoble-playbook -i inventory.txt playbook.yml
+            
 
 workflows:
   # Name the workflow "welcome"
