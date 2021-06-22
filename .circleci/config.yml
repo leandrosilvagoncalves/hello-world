@@ -97,9 +97,11 @@ workflows:
       # Run the welcome/run job in its own containerr
       jobs:
         - save_hello_world_output:
-             context: slack-secrets
+           context: 
+            - slack-secrets
         - print_output_file:
-             context: slack-secrets
+           context: 
+            - slack-secrets
            requires:
             - save_hello_world_output
         # - print_pipeline
