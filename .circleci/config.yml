@@ -24,22 +24,12 @@ jobs:
           paths:
             - output.txt
       - slack/notify:
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "plain_text",
-                      "text": "*This is a text notification saying that job "save_hello_world_output" passed *",
-                      "emoji": true
-                    }
-                  ]
-                }
-              ]
-            }
-          event: always
+          event: pass
+          template: basic_success_1
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+
   print_output_file:
     docker:
       - image: circleci/node:13.8.0
@@ -48,22 +38,12 @@ jobs:
           at: ~/
       - run: cat ~/output.txt
       - slack/notify:
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "plain_text",
-                      "text": "*This is a text notification saying that job "print_output_file" passed *",
-                      "emoji": true
-                    }
-                  ]
-                }
-              ]
-            }
-          event: always
+          event: pass
+          template: basic_success_1
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+
   return_fail:
     docker:
       - image: circleci/node:13.8.0
@@ -116,8 +96,10 @@ workflows:
     my_workflow:
       # Run the welcome/run job in its own containerr
       jobs:
-        - save_hello_world_output
+        - save_hello_world_output:
+             context: slack-secrets
         - print_output_file:
+             context: slack-secrets
            requires:
             - save_hello_world_output
         # - print_pipeline
