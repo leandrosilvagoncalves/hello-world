@@ -51,11 +51,16 @@ jobs:
       - run: 
           name: echo Return 1
           command: return 1
-        
       - run:
           name: Handlilng Return 1
           command: echo "Hello Error!"
           when: on_fail
+      - slack/notify:
+          event: pass
+          template: basic_success_1
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
   print_pipeline:
     docker:
       - image: circleci/node:13.8.0
@@ -105,7 +110,11 @@ workflows:
            requires:
             - save_hello_world_output
         # - print_pipeline
-        # - return_fail
+        - return_fail:
+            context: 
+            - slack-secrets
+            requires:
+            - print_output_file
         # - create_infrastructure
         # - configure-infrastructure
         
