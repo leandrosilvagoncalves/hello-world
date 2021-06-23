@@ -78,7 +78,15 @@ jobs:
             aws cloudformation deploy \
               --template-file template.yml \
               --stack-name lgsg-stack \
-              --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" 
+              --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM"
+      - run:
+          name: Get Public IP's
+          command:  |
+            aws ec2 describe-instances \
+             --query 'Reservations[*].Instances[*].PublicIpAddress' \
+             --filters "Name=tag:Project,Values=udacity" \
+             --output text >> inventory.txt
+             
   configure-infrastructure:
     docker:
       - image: python:3.7-alpine3.11
@@ -93,7 +101,7 @@ jobs:
       - run:
           name: Configure Server
           command:
-            ansible-playbook config.yml -i inventory.txt
+            ansible-playbook -i inventory.txt ansible/playbook.yml
 
 
 workflows:
@@ -101,22 +109,28 @@ workflows:
     my_workflow:
       # Run the welcome/run job in its own containerr
       jobs:
-        - save_hello_world_output:
-           context: 
-            - slack-secrets
-        - print_output_file:
-           context: 
-            - slack-secrets
-           requires:
-            - save_hello_world_output
+        # - save_hello_world_output:
+        #    context: 
+        #     - slack-secrets
+        # - print_output_file:
+        #    context: 
+        #     - slack-secrets
+        #    requires:
+        #     - save_hello_world_output
         # - print_pipeline
-        - return_fail:
-            context: 
-            - slack-secrets
-            requires:
-            - print_output_file
-        # - create_infrastructure
-        # - configure-infrastructure
+        # - return_fail:
+        #     context: 
+        #     - slack-secrets
+        #     requires:
+        #     - print_output_file
+        - create_infrastructure
+        - configure-infrastructure
+            filters:
+              branches:
+                only: main
+            requires: create_infrastructure
+
+
         
 
 
