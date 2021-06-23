@@ -124,7 +124,7 @@ workflows:
         #     requires:
         #     - print_output_file
         - create_infrastructure
-        - configure-infrastructure
+        - configure-infrastructure:
             requires: 
               - create_infrastructure
             filters:
