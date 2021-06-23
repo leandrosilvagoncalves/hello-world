@@ -125,10 +125,12 @@ workflows:
         #     - print_output_file
         - create_infrastructure
         - configure-infrastructure
+            requires: 
+              - create_infrastructure
             filters:
               branches:
                 only: main
-            requires: create_infrastructure
+            
 
 
         
