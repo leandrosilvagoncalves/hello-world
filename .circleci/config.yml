@@ -80,11 +80,9 @@ jobs:
               --stack-name lgsg-stack \
               --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM"
       - slack/notify:
-          event: pass
-          template: basic_success_1
-      - slack/notify:
-          event: fail
-          template: basic_fail_1       
+          failure_message: "Failure: build [$CIRCLE_BUILD_NUM]($CIRCLE_BUILD_URL) of [<<pipeline.git.branch>>](<<pipeline.project.git_url>>/tree/<<pipeline.git.branch>>) _($CIRCLE_USERNAME)_"
+          success_message: "Success: build [$CIRCLE_BUILD_NUM]($CIRCLE_BUILD_URL) of [<<pipeline.git.branch>>](<<pipeline.project.git_url>>/tree/<<pipeline.git.branch>>) _($CIRCLE_USERNAME)_"
+       
 
   get_aws_instances:
     docker:
