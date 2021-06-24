@@ -77,10 +77,6 @@ jobs:
           command: |
             yum install jq -y
       - run:
-          name: Install Curl
-          command: |
-            yum install curl
-      - run:
           name: Ensure backend infrastructure exist
           command: |
             aws cloudformation deploy \
@@ -99,6 +95,10 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - run:
+          name: Install jq
+          command: |
+            yum install jq -y
       - run:
           name: Get Instances DNS address
           command: |
