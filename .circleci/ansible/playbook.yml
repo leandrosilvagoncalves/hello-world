@@ -1,7 +1,7 @@
 ---
 - name: Exercise for setting up a deployment job
   hosts: all
-  user: ec2-user
+  user: ubuntu
   roles:
   #- prepare
   - play
