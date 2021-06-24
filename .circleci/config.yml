@@ -111,7 +111,7 @@ jobs:
               --filters "Name=tag:project,Values=udacity" \
               --output text >> inventory.txt
       - store_artifacts:
-          path: ~/inventory.txt
+          path: inventory.txt
           destination: .circleci/ansible/inventory.txt
       - slack/notify:
           event: pass
