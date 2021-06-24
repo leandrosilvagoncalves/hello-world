@@ -73,9 +73,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install Bash
+          name: Install jq
           command: |
-            yum install bash-completion --enablerepo=epel
+            yum install jq -y
       - run:
           name: Install Curl
           command: |
