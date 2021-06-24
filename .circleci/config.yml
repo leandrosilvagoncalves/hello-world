@@ -123,7 +123,7 @@ jobs:
       - run:
           name: Install Dependencies
           command:
-            apk add --update ansible curl
+            apk add --update ansible curl jq
       - run:
           name: Configure Server
           command:
