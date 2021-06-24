@@ -100,12 +100,19 @@ jobs:
           command: |
             yum install jq -y
       - run:
+          name: Create Inventory file
+          command: |
+            echo "[all]" > inventory.txt
+      - run:
           name: Get Instances DNS address
           command: |
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicDnsName' \
               --filters "Name=tag:project,Values=udacity" \
-              --output text >> .circleci/ansible/inventory.txt
+              --output text >> inventory.txt
+      - store_artifacts:
+          path: ~/inventory.txt
+          destination: .circleci/ansible/inventory.txt
       - slack/notify:
           event: pass
           template: basic_success_1
@@ -140,6 +147,10 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - run:
+          name: Install jq
+          command: |
+            yum install jq -y
       - run:
           name: Delete created cloudformation script
           command: |
@@ -179,19 +190,19 @@ workflows:
              - slack-secrets
             requires: 
               - create_infrastructure
-        - configure-infrastructure:
-            context: 
-             - slack-secrets
-            requires: 
-              - get_aws_instances
-            filters:
-              branches:
-                only: main
-        - delete_infrastructure:
-            context: 
-             - slack-secrets
-            requires: 
-              - configure-infrastructure
+        # - configure-infrastructure:
+        #     context: 
+        #      - slack-secrets
+        #     requires: 
+        #       - get_aws_instances
+        #     filters:
+        #       branches:
+        #         only: main
+        # - delete_infrastructure:
+        #     context: 
+        #      - slack-secrets
+        #     requires: 
+        #       - configure-infrastructure
             
 
 
