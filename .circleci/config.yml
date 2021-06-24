@@ -79,13 +79,7 @@ jobs:
               --template-file template.yml \
               --stack-name lgsg-stack \
               --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM"
-      - run:
-          name: Get Public IP's
-          command:  |
-            aws ec2 describe-instances \
-             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-             --filters "Name=tag:project,Values=udacity" \
-             --output text >> inventory.txt
+      
              
   configure-infrastructure:
     docker:
@@ -99,9 +93,16 @@ jobs:
           command:
             apk add --update ansible 
       - run:
+          name: Get Public IP's
+          command:  |
+            aws ec2 describe-instances \
+             --query 'Reservations[*].Instances[*].PublicIpAddress' \
+             --filters "Name=tag:project,Values=udacity" \
+             --output text >> .circleci/ansible/inventory.txt
+      - run:
           name: Configure Server
           command:
-            ansible-playbook -i inventory.txt ansible/playbook.yml
+            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/playbook.yml
 
 
 workflows:
