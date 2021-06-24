@@ -79,8 +79,32 @@ jobs:
               --template-file template.yml \
               --stack-name lgsg-stack \
               --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM"
-      
-             
+      - slack/notify:
+          event: pass
+          template: basic_success_1
+      - slack/notify:
+          event: fail
+          template: basic_fail_1       
+
+  get_aws_instances:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Get Instances DNS address
+          command: |
+            aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicDnsName' \
+              --filters "Name=tag:project,Values=udacity" \
+              --output text >> .circleci/ansible/inventory.txt
+      - slack/notify:
+          event: pass
+          template: basic_success_1
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+
   configure-infrastructure:
     docker:
       - image: python:3.7-alpine3.11
@@ -96,7 +120,29 @@ jobs:
           name: Configure Server
           command:
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/playbook.yml
+      - slack/notify:
+          event: pass
+          template: basic_success_1
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
 
+  delete_infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Delete created cloudformation script
+          command: |
+            aws cloudformation delete-stack \
+              --stack-name lgsg-stack
+      - slack/notify:
+          event: pass
+          template: basic_success_1
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
 
 workflows:
   # Name the workflow "welcome"
@@ -117,13 +163,27 @@ workflows:
         #     - slack-secrets
         #     requires:
         #     - print_output_file
-        - create_infrastructure
-        - configure-infrastructure:
+        - create_infrastructure:
+            context: 
+             - slack-secrets
+        - get_aws_instances:
+            context: 
+             - slack-secrets
             requires: 
               - create_infrastructure
+        - configure-infrastructure:
+            context: 
+             - slack-secrets
+            requires: 
+              - get_aws_instances
             filters:
               branches:
                 only: main
+        - delete_infrastructure:
+            context: 
+             - slack-secrets
+            requires: 
+              - configure-infrastructure
             
 
 

@@ -39,6 +39,10 @@
     src: "files/text.txt"
     dest: "~/web/text.txt"
 
+- name: Echo text file
+  shell: |
+    cat '~/web/text.txt'
+
 # - name: Executing node
 #   shell: |
 #     pm2 start ~/web/index.js -f
