@@ -12,7 +12,16 @@ commands:
       id:
         type: string
     steps:
-      - run: << parameters.id >>  
+      - run: << parameters.id >>
+
+  destroy_environment:
+    description: "Script that detroys cloudformation stack"
+    steps:
+      - run:
+          name: Destroy environment
+          command: |
+              aws cloudformation delete-stack \
+              --stack-name lgsg-${CIRCLE_WORKFLOW_ID}
 jobs:
   save_hello_world_output:
     docker:
@@ -81,7 +90,7 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file template.yml \
-              --stack-name lgsg-stack \
+              --stack-name lgsg-${CIRCLE_WORKFLOW_ID} \
               --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM"
       - slack/notify:
           event: pass
@@ -153,6 +162,36 @@ jobs:
           event: fail
           template: basic_fail_1
 
+  # smoke-test:
+  #   docker:
+  #     - image: alpine:latest
+  #   steps:
+  #     - run: apk add --update curl
+  #     - run:
+  #         name: smoke test
+  #         command: |
+  #           URL="https://google.com"
+  #           if curl -s --head ${URL} 
+  #           then
+  #             return 0
+  #           else
+  #             return 1
+  #           fi
+    smoke-test:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: simulate error
+          command: |
+            return 1
+      - destroy_environment
+        when: on_fail
+      - slack/status
+        failure_message: "Failure: build [$CIRCLE_BUILD_NUM]($CIRCLE_BUILD_URL) of [<<pipeline.git.branch>>](<<pipeline.project.git_url>>/tree/<<pipeline.git.branch>>) _($CIRCLE_USERNAME)_"
+        success_message: "Success: build [$CIRCLE_BUILD_NUM]($CIRCLE_BUILD_URL) of [<<pipeline.git.branch>>](<<pipeline.project.git_url>>/tree/<<pipeline.git.branch>>) _($CIRCLE_USERNAME)_"
+ 
   delete_infrastructure:
     docker:
       - image: amazon/aws-cli
@@ -193,27 +232,36 @@ workflows:
         #     - slack-secrets
         #     requires:
         #     - print_output_file
+
         - create_infrastructure:
             context: 
              - slack-secrets
-        - get_aws_instances:
+        - smoke-test:
             context: 
              - slack-secrets
             requires: 
               - create_infrastructure
-        - configure-infrastructure:
-            context: 
-             - slack-secrets
-            requires: 
-              - get_aws_instances
-            filters:
-              branches:
-                only: main
-        - delete_infrastructure:
-            context: 
-             - slack-secrets
-            requires: 
-              - configure-infrastructure
+        # - get_aws_instances:
+        #     context: 
+        #      - slack-secrets
+        #     requires: 
+        #       - create_infrastructure
+        # - configure-infrastructure:
+        #     context: 
+        #      - slack-secrets
+        #     requires: 
+        #       - get_aws_instances
+        #     filters:
+        #       branches:
+        #         only: main
+        # - smoke-test:
+        #     requires:
+        #       - configure-infrastructure
+        # - delete_infrastructure:
+        #     context: 
+        #      - slack-secrets
+        #     requires: 
+        #       - configure-infrastructure
             
 
 
