@@ -187,10 +187,7 @@ jobs:
           command: |
             return 1
       - destroy_environment
-      - slack/status:
-          failure_message: "Failure: build [$CIRCLE_BUILD_NUM]($CIRCLE_BUILD_URL) of [<<pipeline.git.branch>>](<<pipeline.project.git_url>>/tree/<<pipeline.git.branch>>) _($CIRCLE_USERNAME)_"
-          success_message: "Success: build [$CIRCLE_BUILD_NUM]($CIRCLE_BUILD_URL) of [<<pipeline.git.branch>>](<<pipeline.project.git_url>>/tree/<<pipeline.git.branch>>) _($CIRCLE_USERNAME)_"
-     
+      
  
   delete_infrastructure:
     docker:
@@ -236,8 +233,6 @@ workflows:
             context: 
               - slack-secrets
         - smoke-test:
-            context: 
-              - slack-secrets
             requires: 
               - create_infrastructure
         # - get_aws_instances:
