@@ -111,9 +111,9 @@ jobs:
               --filters "Name=tag:project,Values=udacity" \
               --output text >> inventory.txt
       - run:
-          name: get file output
+          name: where am I?
           command: |
-            cat inventory.txt
+            pwd
       - persist_to_workspace:
           root: ~/
           paths:
