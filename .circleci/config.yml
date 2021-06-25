@@ -232,13 +232,12 @@ workflows:
         #     - slack-secrets
         #     requires:
         #     - print_output_file
-
         - create_infrastructure:
             context: 
-             - slack-secrets
+              - slack-secrets
         - smoke-test:
             context: 
-             - slack-secrets
+              - slack-secrets
             requires: 
               - create_infrastructure
         # - get_aws_instances:
