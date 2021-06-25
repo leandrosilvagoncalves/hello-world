@@ -201,14 +201,14 @@ workflows:
              - slack-secrets
             requires: 
               - create_infrastructure
-        # - configure-infrastructure:
-        #     context: 
-        #      - slack-secrets
-        #     requires: 
-        #       - get_aws_instances
-        #     filters:
-        #       branches:
-        #         only: main
+        - configure-infrastructure:
+            context: 
+             - slack-secrets
+            requires: 
+              - get_aws_instances
+            filters:
+              branches:
+                only: main
         # - delete_infrastructure:
         #     context: 
         #      - slack-secrets
