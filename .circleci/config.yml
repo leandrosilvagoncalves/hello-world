@@ -177,7 +177,7 @@ jobs:
   #           else
   #             return 1
   #           fi
-    smoke-test:
+  smoke-test:
     docker:
       - image: amazon/aws-cli
     steps:
