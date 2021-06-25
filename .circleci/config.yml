@@ -15,7 +15,6 @@ commands:
       - run: << parameters.id >>
 
   destroy_environment:
-    description: "Script that detroys cloudformation stack"
     steps:
       - run:
           name: Destroy environment
