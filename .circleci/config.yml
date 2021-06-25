@@ -98,7 +98,7 @@ jobs:
       - run:
           name: Install jq
           command: |
-            yum install jq -y
+            yum install tar jq -y
       - run:
           name: Create Inventory file
           command: |
