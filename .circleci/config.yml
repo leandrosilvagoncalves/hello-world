@@ -184,9 +184,9 @@ jobs:
       - run:
           name: simulate error
           command: |
-            return 1
+            exit 1
       - destroy_environment
-      when: on_fail
+        when: on_fail
      
  
   delete_infrastructure:
