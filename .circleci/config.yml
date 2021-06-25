@@ -115,7 +115,7 @@ jobs:
           command: |
             pwd
       - persist_to_workspace:
-          root: ~/
+          root: /root/project
           paths:
             - inventory.txt
                    
@@ -135,7 +135,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/
+          at: /root/project
       - add_ssh_keys:
           fingerprints: ["71:95:f4:44:03:5a:14:78:08:45:93:7b:e7:9e:86:94"]
       - run:
@@ -145,7 +145,7 @@ jobs:
       - run:
           name: Configure Server
           command:
-            ansible-playbook -i ~/inventory.txt .circleci/ansible/playbook.yml
+            ansible-playbook -i /root/project/inventory.txt .circleci/ansible/playbook.yml
       - slack/notify:
           event: pass
           template: basic_success_1
