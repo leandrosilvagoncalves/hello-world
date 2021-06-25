@@ -187,7 +187,7 @@ jobs:
           command: |
             return 1
       - destroy_environment
-        when: on_fail
+          when: on_fail
       - slack/status
         failure_message: "Failure: build [$CIRCLE_BUILD_NUM]($CIRCLE_BUILD_URL) of [<<pipeline.git.branch>>](<<pipeline.project.git_url>>/tree/<<pipeline.git.branch>>) _($CIRCLE_USERNAME)_"
         success_message: "Success: build [$CIRCLE_BUILD_NUM]($CIRCLE_BUILD_URL) of [<<pipeline.git.branch>>](<<pipeline.project.git_url>>/tree/<<pipeline.git.branch>>) _($CIRCLE_USERNAME)_"
