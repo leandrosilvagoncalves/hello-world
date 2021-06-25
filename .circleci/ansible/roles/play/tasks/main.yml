@@ -41,7 +41,7 @@
 
 - name: Echo text file
   shell: |
-    cat '~/web/text.txt'
+    cat 'web/text.txt'
 
 # - name: Executing node
 #   shell: |

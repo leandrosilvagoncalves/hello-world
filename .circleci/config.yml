@@ -209,11 +209,11 @@ workflows:
             filters:
               branches:
                 only: main
-        # - delete_infrastructure:
-        #     context: 
-        #      - slack-secrets
-        #     requires: 
-        #       - configure-infrastructure
+        - delete_infrastructure:
+            context: 
+             - slack-secrets
+            requires: 
+              - configure-infrastructure
             
 
 
