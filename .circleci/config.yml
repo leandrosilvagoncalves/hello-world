@@ -102,17 +102,22 @@ jobs:
       - run:
           name: Create Inventory file
           command: |
-            echo "[all]" > inventory.txt
+            echo "[all]" > /tmp/Ansible/files/inventory.txt
       - run:
           name: Get Instances DNS address
           command: |
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicDnsName' \
               --filters "Name=tag:project,Values=udacity" \
-              --output text >> inventory.txt
-      - store_artifacts:
-          path: inventory.txt
-          destination: .circleci/ansible/inventory.txt
+              --output text >> /tmp/Ansible/files/inventory.txt
+      - persist_to_workspace:
+          root: /tmp/Ansible
+          paths:
+            - files/inventory.txt
+                   
+      # - store_artifacts:
+      #     path: inventory.txt
+      #     destination: circleci-docs/ansible/inventory.txt
       - slack/notify:
           event: pass
           template: basic_success_1
@@ -125,6 +130,8 @@ jobs:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
+      - attach_workspace:
+          at: /tmp/Ansible
       - add_ssh_keys:
           fingerprints: ["71:95:f4:44:03:5a:14:78:08:45:93:7b:e7:9e:86:94"]
       - run:
@@ -134,7 +141,7 @@ jobs:
       - run:
           name: Configure Server
           command:
-            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/playbook.yml
+            ansible-playbook -i /tmp/Ansible/files/inventory.txt .circleci/ansible/playbook.yml
       - slack/notify:
           event: pass
           template: basic_success_1
