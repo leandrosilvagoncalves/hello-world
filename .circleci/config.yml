@@ -98,7 +98,7 @@ jobs:
       - run:
           name: Install jq
           command: |
-            yum install tar jq -y
+            yum install tar gzip jq -y
       - run:
           name: Create Inventory file
           command: |
@@ -110,6 +110,10 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicDnsName' \
               --filters "Name=tag:project,Values=udacity" \
               --output text >> inventory.txt
+      - run:
+          name: get file output
+          command: |
+            cat inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
