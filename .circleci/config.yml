@@ -219,8 +219,8 @@ jobs:
           aws cloudformation deploy \
             --template-file frontend/bucket.yml \
             --stack-name "${CIRCLE_WORKFLOW_ID:0:5}" \
-            --parameter-overrides NAME="${CIRCLE_WORKFLOW_ID:0:5}"
-      - run: aws s3 sync . s3://"${CIRCLE_WORKFLOW_ID:0:7}" --delete
+            --parameter-overrides NAME="lgsg-${CIRCLE_WORKFLOW_ID:0:5}"
+      - run: aws s3 sync . s3://"$lgsg-{CIRCLE_WORKFLOW_ID:0:7}" --delete
 
   promote_to_production:
     docker:
@@ -231,7 +231,7 @@ jobs:
           aws cloudformation deploy \
             --template-file cloudformation/cloudfront.yml \
             --stack-name cloudfront \
-            --parameter-overrides PipelineID="${CIRCLE_WORKFLOW_ID:0:5}"
+            --parameter-overrides PipelineID="lgsg-${CIRCLE_WORKFLOW_ID:0:5}"
 
 workflows:
   # Name the workflow "welcome"
