@@ -218,9 +218,9 @@ jobs:
       - run: |
           aws cloudformation deploy \
             --template-file frontend/bucket.yml \
-            --stack-name "${CIRCLE_WORKFLOW_ID:0:5}" \
+            --stack-name "lgsg-${CIRCLE_WORKFLOW_ID:0:5}" \
             --parameter-overrides NAME="lgsg-${CIRCLE_WORKFLOW_ID:0:5}"
-      - run: aws s3 sync . s3://"$lgsg-{CIRCLE_WORKFLOW_ID:0:7}" --delete
+      - run: aws s3 sync . s3://"$lgsg-{CIRCLE_WORKFLOW_ID:0:5}" --delete
 
   promote_to_production:
     docker:
