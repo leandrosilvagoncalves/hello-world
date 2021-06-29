@@ -20,7 +20,7 @@ commands:
           name: Destroy environment
           command: |
               aws cloudformation delete-stack \
-              --stack-name lgsg-${CIRCLE_WORKFLOW_ID}
+              --stack-name lgsg-${CIRCLE_WORKFLOW_ID:0:5}
           when: on_fail
 jobs:
   save_hello_world_output:
@@ -89,8 +89,8 @@ jobs:
           name: Ensure backend infrastructure exist
           command: |
             aws cloudformation deploy \
-              --template-file template.yml \
-              --stack-name lgsg-${CIRCLE_WORKFLOW_ID} \
+              --template-file cloudformation/createubuntuinstance.yml \
+              --stack-name lgsg-${CIRCLE_WORKFLOW_ID:0:5} \
               --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM"
       - slack/notify:
           event: pass
@@ -210,6 +210,29 @@ jobs:
           event: fail
           template: basic_fail_1
 
+  create_and_deploy_front_end:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run: |
+          aws cloudformation deploy \
+            --template-file frontend/bucket.yml \
+            --stack-name "${CIRCLE_WORKFLOW_ID}" \
+            --parameter-overrides NAME="${CIRCLE_WORKFLOW_ID}"
+      - run: aws s3 sync . s3://"${CIRCLE_WORKFLOW_ID}" --delete
+
+  promote_to_production:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run: |
+          aws cloudformation deploy \
+            --template-file cloudformation/cloudfront.yml \
+            --stack-name cloudfront \
+            --parameter-overrides PipelineID="${CIRCLE_WORKFLOW_ID}"
+
 workflows:
   # Name the workflow "welcome"
     my_workflow:
@@ -229,12 +252,12 @@ workflows:
         #     - slack-secrets
         #     requires:
         #     - print_output_file
-        - create_infrastructure:
-            context: 
-              - slack-secrets
-        - smoke-test:
-            requires: 
-              - create_infrastructure
+        # - create_infrastructure:
+        #     context: 
+        #       - slack-secrets
+        # - smoke-test:
+        #     requires: 
+        #       - create_infrastructure
         # - get_aws_instances:
         #     context: 
         #      - slack-secrets
@@ -256,7 +279,9 @@ workflows:
         #      - slack-secrets
         #     requires: 
         #       - configure-infrastructure
-            
+        - create_and_deploy_front_end
+        - promote_to_production
+            requires: create_and_deploy_front_end            
 
 
         
